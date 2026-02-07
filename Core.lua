@@ -5,12 +5,12 @@
 -- Optimized addon initialization and event handling
 
 local AddonName, NS = ...
-HuskiesQOL = HuskiesQOL or {}
-local addon = HuskiesQOL
+local addon = {}
+NS.addon = addon
 
 -- Namespace for modules
 NS.Modules = {}
-addon.Modules = {}
+addon.Modules = NS.Modules
 
 -- Event frame
 local eventFrame = CreateFrame("Frame")
@@ -38,13 +38,7 @@ local function Initialize()
     
     -- Store DB reference
     addon.db = HuskiesQOL_DB
-    
-    -- Suppress taint warnings for this addon (WoW 12.0 workaround)
-    -- This prevents Blizzard from showing taint messages for our UI
-    if issecurevariable then
-        issecurevariable("HuskiesQOL")
-    end
-    
+
     -- Register slash commands
     SLASH_HUSKIESQOL1 = "/huskies"
     SLASH_HUSKIESQOL2 = "/hqol"

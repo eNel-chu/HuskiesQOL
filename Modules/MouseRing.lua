@@ -1,7 +1,8 @@
 -- Mouse Ring Module
 -- Shows a circle around the mouse cursor (optional: only in combat)
 
-local addon = HuskiesQOL
+local AddonName, NS = ...
+local addon = NS.addon
 local MouseRing = CreateFrame("Frame", "HuskiesQOL_MouseRing", UIParent)
 MouseRing:SetFrameStrata("TOOLTIP")
 MouseRing:SetSize(200, 200)

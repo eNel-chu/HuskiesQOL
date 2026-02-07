@@ -2,7 +2,8 @@
 -- Tab creation functions for HuskiesQOL config window
 -- WoW 12.0 Compatible
 
-local addon = HuskiesQOL
+local AddonName, NS = ...
+local addon = NS.addon
 
 -- ========================================
 -- HELPER FUNCTIONS - MODERN STYLE

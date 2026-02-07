@@ -2,8 +2,8 @@
 -- Lern-Version mit detaillierten Kommentaren
 -- WoW 12.0 Compatible
 
-local addon = HuskiesQOL or {}
-HuskiesQOL = addon
+local AddonName, NS = ...
+local addon = NS.addon
 
 -- ========================================
 -- KONZEPT: Frame-Erstellung

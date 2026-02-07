@@ -1,7 +1,8 @@
 -- Crosshair Module
 -- Performance optimized with style options
 
-local addon = HuskiesQOL
+local AddonName, NS = ...
+local addon = NS.addon
 local Crosshair = CreateFrame("Frame", "HuskiesQOL_Crosshair", UIParent)
 Crosshair:SetFrameStrata("HIGH")
 Crosshair:Hide()

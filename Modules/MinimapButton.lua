@@ -1,8 +1,8 @@
 -- Minimap Button for HuskiesQOL
 -- Simple, reliable approach with free movement
 
-local addon = HuskiesQOL or {}
-HuskiesQOL = addon
+local AddonName, NS = ...
+local addon = NS.addon
 
 -- ========================================
 -- CREATE BUTTON - SIMPLE APPROACH

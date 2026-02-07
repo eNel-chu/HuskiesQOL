@@ -1,7 +1,8 @@
 -- Combat Notifier Module
 -- Shows on-screen messages when entering/leaving combat
 
-local addon = HuskiesQOL
+local AddonName, NS = ...
+local addon = NS.addon
 local CombatNotifier = CreateFrame("Frame", "HuskiesQOL_CombatNotifier", UIParent)
 CombatNotifier:SetSize(400, 100)
 CombatNotifier:SetPoint("TOP", UIParent, "TOP", 0, -200)

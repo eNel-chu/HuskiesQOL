@@ -2,7 +2,8 @@
 -- Shows ability history with customizable direction and stack counts
 -- WoW 12.0 Compatible
 
-local addon = HuskiesQOL
+local AddonName, NS = ...
+local addon = NS.addon
 
 -- Spell blacklist (auto-attacks, passive effects, etc.)
 local SPELL_BLACKLIST = {

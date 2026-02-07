@@ -1,7 +1,8 @@
 -- Settings Panel Integration
 -- Integrates addon into WoW's settings interface
 
-local addon = HuskiesQOL
+local AddonName, NS = ...
+local addon = NS.addon
 
 -- Create main panel
 local panel = CreateFrame("Frame")

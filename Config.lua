@@ -1,6 +1,7 @@
 -- HuskiesQOL Configuration Defaults
 
-local addon = HuskiesQOL
+local AddonName, NS = ...
+local addon = NS.addon
 
 addon.Defaults = {
     -- Crosshair Settings
