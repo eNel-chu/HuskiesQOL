@@ -8,6 +8,9 @@ MouseRing:SetFrameStrata("TOOLTIP")
 MouseRing:SetSize(200, 200)
 MouseRing:Hide()
 
+-- State tracking
+local isInCombat = false
+
 -- Circle segments (textures for smooth circle)
 MouseRing.segments = {}
 
@@ -82,17 +85,18 @@ end
 -- Update visibility
 function MouseRing:UpdateVisibility()
     local db = addon.db.mouseRing
-    
+
     if not db.enabled then
         self:Hide()
         return
     end
-    
-    if db.onlyInCombat and not InCombatLockdown() then
+
+    -- Use state variable instead of InCombatLockdown() to avoid timing issues
+    if db.onlyInCombat and not isInCombat then
         self:Hide()
         return
     end
-    
+
     self:Show()
 end
 
@@ -117,15 +121,21 @@ MouseRing:RegisterEvent("PLAYER_REGEN_ENABLED")
 
 MouseRing:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_LOGIN" then
+        -- Initialize combat state
+        isInCombat = InCombatLockdown()
         self:UpdateAppearance()
-        
+
     elseif event == "PLAYER_REGEN_DISABLED" then
+        -- Entering combat - Set variable FIRST, then update visibility
+        isInCombat = true
         self:UpdateVisibility()
         if addon.db.mouseRing.pulseOnCombat and self:IsShown() then
             pulseAnim:Play()
         end
-        
+
     elseif event == "PLAYER_REGEN_ENABLED" then
+        -- Leaving combat - Set variable FIRST, then update visibility
+        isInCombat = false
         self:UpdateVisibility()
     end
 end)
