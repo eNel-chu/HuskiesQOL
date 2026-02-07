@@ -1,3 +1,4 @@
+-- git test
 -- HuskiesQOL Core
 -- Optimized addon initialization and event handling
 
