@@ -108,23 +108,23 @@ textAnim:SetScript("OnFinished", function()
     CombatNotifier.text:SetAlpha(0)
 end)
 
--- Dragging
-CombatNotifier:RegisterForDrag("LeftButton")
-
-CombatNotifier:SetScript("OnDragStart", function(self)
-    if addon.db.combatNotifier.unlocked then
+-- Mouse-based movement (smoother than drag)
+CombatNotifier:SetScript("OnMouseDown", function(self, button)
+    if button == "LeftButton" and addon.db.combatNotifier.unlocked then
         self:StartMoving()
     end
 end)
 
-CombatNotifier:SetScript("OnDragStop", function(self)
-    self:StopMovingOrSizing()
-    local point, _, relativePoint, x, y = self:GetPoint()
-    if addon.db.combatNotifier then
-        addon.db.combatNotifier.point = point
-        addon.db.combatNotifier.relativePoint = relativePoint
-        addon.db.combatNotifier.xOffset = x
-        addon.db.combatNotifier.yOffset = y
+CombatNotifier:SetScript("OnMouseUp", function(self, button)
+    if button == "LeftButton" then
+        self:StopMovingOrSizing()
+        local point, _, relativePoint, x, y = self:GetPoint()
+        if addon.db.combatNotifier then
+            addon.db.combatNotifier.point = point
+            addon.db.combatNotifier.relativePoint = relativePoint
+            addon.db.combatNotifier.xOffset = x
+            addon.db.combatNotifier.yOffset = y
+        end
     end
 end)
 
