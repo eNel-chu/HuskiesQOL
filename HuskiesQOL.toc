@@ -1,0 +1,23 @@
+## Interface: 120000
+## Title: |cFF9D4EFFFHUSKIES|r QOL
+## Notes: Quality of Life improvements by Huskies
+## Author: Huskies
+## Version: 2.0.0
+## SavedVariables: HuskiesQOL_DB
+## IconTexture: Interface\AddOns\HuskiesQOL\Media\HuskiesLogo
+
+# Core
+Core.lua
+Config.lua
+
+# Modules
+Modules\Crosshair.lua
+Modules\MouseRing.lua
+Modules\GCDTracker.lua
+Modules\CombatNotifier.lua
+Modules\MinimapButton.lua
+
+# UI
+UI\ConfigWindow_Tabs.lua
+UI\ConfigWindow.lua
+UI\SettingsPanel.lua
