@@ -1,7 +1,7 @@
 ## Interface: 120000
 ## Title: |cFF9D4EFFFHUSKIES|r QOL
 ## Notes: Quality of Life improvements by Huskies
-## Author: Huskies
+## Author: eNel-chu
 ## Version: 2.0.0
 ## SavedVariables: HuskiesQOL_DB
 ## IconTexture: Interface\AddOns\HuskiesQOL\Media\HuskiesLogo
