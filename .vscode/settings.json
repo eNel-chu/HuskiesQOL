@@ -20,6 +20,7 @@
         "SlashCmdList",
         "StaticPopup_Show",
         "ReloadUI",
-        "Settings"
+        "Settings",
+        "RAID_CLASS_COLORS"
     ]
 }

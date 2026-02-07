@@ -680,14 +680,35 @@ function addon:CreateCrosshairTab(parent)
         })
     end)
     yOffset = yOffset - 80
-    
+
+    -- Use Class Color checkbox
+    local classColorCheck = CreateCheckbox(tab, "Use Class Color", "Automatically use your character's class color")
+    classColorCheck:SetPoint("TOPLEFT", 0, yOffset)
+    classColorCheck:SetChecked(addon.db.crosshair.useClassColor or false)
+    classColorCheck:SetScript("OnClick", function(self)
+        addon.db.crosshair.useClassColor = self:GetChecked()
+        local module = addon:GetModule("Crosshair")
+        if module and module.UpdateAppearance then
+            module:UpdateAppearance()
+        end
+    end)
+    yOffset = yOffset - 50
+
+    -- Separator
+    local sepColor = tab:CreateTexture(nil, "ARTWORK")
+    sepColor:SetHeight(2)
+    sepColor:SetPoint("TOPLEFT", 0, yOffset)
+    sepColor:SetPoint("TOPRIGHT", -20, yOffset)
+    sepColor:SetColorTexture(0.3, 0.3, 0.35, 0.8)
+    yOffset = yOffset - 20
+
     -- Visibility options
     local visHeader = tab:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     visHeader:SetPoint("TOPLEFT", 0, yOffset)
     visHeader:SetText("Visibility")
     visHeader:SetTextColor(0.4, 0.7, 1, 1)
     yOffset = yOffset - 40
-    
+
     local combatCheck = CreateCheckbox(tab, "Only Show in Combat", "Hide crosshair when not in combat")
     combatCheck:SetPoint("TOPLEFT", 0, yOffset)
     combatCheck:SetChecked(addon.db.crosshair.onlyInCombat or false)
@@ -790,15 +811,14 @@ function addon:CreateMouseRingTab(parent)
         end
     end)
     yOffset = yOffset - 80
-    
+
     -- Thickness slider
-    local thicknessSlider = CreateSlider(tab, "Line Thickness", 1, 10, 1, "Thickness of the ring line")
+    local thicknessSlider = CreateSlider(tab, "Ring Thickness", 0.5, 2.0, 0.1, "Size multiplier for the ring (thicker/thinner)")
     thicknessSlider:SetPoint("TOPLEFT", 0, yOffset)
-    thicknessSlider:SetValue(addon.db.mouseRing.thickness or 3)
-    thicknessSlider.Value:SetText(addon.db.mouseRing.thickness or 3)
+    thicknessSlider:SetValue(addon.db.mouseRing.thickness or 1.0)
+    thicknessSlider.Value:SetText(string.format("%.1f", addon.db.mouseRing.thickness or 1.0))
     thicknessSlider:SetScript("OnValueChanged", function(self, value)
-        value = math.floor(value)
-        self.Value:SetText(value)
+        self.Value:SetText(string.format("%.1f", value))
         addon.db.mouseRing.thickness = value
         local module = addon:GetModule("MouseRing")
         if module and module.UpdateAppearance then
@@ -806,7 +826,7 @@ function addon:CreateMouseRingTab(parent)
         end
     end)
     yOffset = yOffset - 80
-    
+
     -- Color picker
     local colorFrame = CreateColorPicker(tab, "Ring Color", "Click to change ring color")
     colorFrame:SetPoint("TOPLEFT", 0, yOffset)
@@ -868,14 +888,35 @@ function addon:CreateMouseRingTab(parent)
         })
     end)
     yOffset = yOffset - 80
-    
+
+    -- Use Class Color checkbox
+    local classColorCheck = CreateCheckbox(tab, "Use Class Color", "Automatically use your character's class color")
+    classColorCheck:SetPoint("TOPLEFT", 0, yOffset)
+    classColorCheck:SetChecked(addon.db.mouseRing.useClassColor or false)
+    classColorCheck:SetScript("OnClick", function(self)
+        addon.db.mouseRing.useClassColor = self:GetChecked()
+        local module = addon:GetModule("MouseRing")
+        if module and module.UpdateAppearance then
+            module:UpdateAppearance()
+        end
+    end)
+    yOffset = yOffset - 50
+
+    -- Separator
+    local sepColor = tab:CreateTexture(nil, "ARTWORK")
+    sepColor:SetHeight(2)
+    sepColor:SetPoint("TOPLEFT", 0, yOffset)
+    sepColor:SetPoint("TOPRIGHT", -20, yOffset)
+    sepColor:SetColorTexture(0.3, 0.3, 0.35, 0.8)
+    yOffset = yOffset - 20
+
     -- Visibility options
     local visHeader = tab:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     visHeader:SetPoint("TOPLEFT", 0, yOffset)
     visHeader:SetText("Visibility")
     visHeader:SetTextColor(0.4, 0.7, 1, 1)
     yOffset = yOffset - 40
-    
+
     local combatCheck = CreateCheckbox(tab, "Only Show in Combat", "Only show ring when in combat")
     combatCheck:SetPoint("TOPLEFT", 0, yOffset)
     combatCheck:SetChecked(addon.db.mouseRing.onlyInCombat ~= false)

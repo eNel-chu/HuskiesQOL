@@ -25,9 +25,23 @@ function Crosshair:UpdateAppearance()
     local db = addon.db.crosshair
     -- Don't check enabled here - we want live preview in config!
     -- if not db.enabled then return end
-    
-    local r, g, b, a = unpack(db.color)
-    a = a or 1  -- Default alpha to 1 if nil
+
+    local r, g, b, a
+    if db.useClassColor then
+        -- Use class color
+        local _, class = UnitClass("player")
+        local classColor = RAID_CLASS_COLORS[class]
+        if classColor then
+            r, g, b = classColor.r, classColor.g, classColor.b
+            a = db.color[4] or 1  -- Keep alpha from custom color
+        else
+            r, g, b, a = unpack(db.color)
+            a = a or 1
+        end
+    else
+        r, g, b, a = unpack(db.color)
+        a = a or 1  -- Default alpha to 1 if nil
+    end
     
     local size = db.size
     local thickness = db.thickness

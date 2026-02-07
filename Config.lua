@@ -11,6 +11,7 @@ addon.Defaults = {
         thickness = 3,
         gap = 4,
         color = {1, 0, 0, 0.9}, -- R, G, B, A
+        useClassColor = false, -- Auto-use class color (different per character)
         yOffset = 0, -- Y Position (negative = up, positive = down)
         onlyInCombat = false,
         hideOnMount = true,
@@ -23,10 +24,10 @@ addon.Defaults = {
     mouseRing = {
         enabled = true,
         radius = 80,
-        thickness = 3,
+        thickness = 1.0, -- Ring size multiplier (0.5 - 2.0)
         color = {0.4, 0.8, 1, 0.8},
+        useClassColor = false, -- Auto-use class color (different per character)
         onlyInCombat = true,
-        segments = 64, -- Higher = smoother circle
         pulseOnCombat = true,
     },
     

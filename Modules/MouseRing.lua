@@ -11,11 +11,14 @@ MouseRing:Hide()
 -- State tracking
 local isInCombat = false
 
--- Circle segments (textures for smooth circle)
-MouseRing.segments = {}
+-- Ring texture (single circle texture)
+MouseRing.ring = MouseRing:CreateTexture(nil, "OVERLAY")
+MouseRing.ring:SetTexture("Interface\\AddOns\\HuskiesQOL\\Media\\pixelring")
+MouseRing.ring:SetPoint("CENTER")
 
 -- Animation for pulse effect
 local pulseAnim = MouseRing:CreateAnimationGroup()
+
 local scale1 = pulseAnim:CreateAnimation("Scale")
 scale1:SetScale(1.2, 1.2)
 scale1:SetDuration(0.2)
@@ -26,51 +29,34 @@ scale2:SetScale(0.833, 0.833) -- Back to 1.0 (1/1.2)
 scale2:SetDuration(0.3)
 scale2:SetOrder(2)
 
--- Build circle from line segments
-function MouseRing:BuildCircle()
+-- Update ring appearance
+function MouseRing:UpdateRing()
     local db = addon.db.mouseRing
-    local segments = db.segments
-    local radius = db.radius
-    local thickness = db.thickness
-    local r, g, b, a = unpack(db.color)
-    
-    -- Clear old segments
-    for _, seg in ipairs(self.segments) do
-        seg:Hide()
+    local radius = db.radius or 80
+    local thickness = db.thickness or 1.0
+    local size = radius * 2 * thickness  -- Apply thickness multiplier
+
+    local r, g, b, a
+    if db.useClassColor then
+        -- Use class color
+        local _, class = UnitClass("player")
+        local classColor = RAID_CLASS_COLORS[class]
+        if classColor then
+            r, g, b = classColor.r, classColor.g, classColor.b
+            a = db.color[4] or 1  -- Keep alpha from custom color
+        else
+            r, g, b, a = unpack(db.color)
+        end
+    else
+        r, g, b, a = unpack(db.color)
     end
-    wipe(self.segments)
-    
-    -- Create new segments
-    local angleStep = (2 * math.pi) / segments
-    
-    for i = 1, segments do
-        local angle = i * angleStep
-        local nextAngle = (i + 1) * angleStep
-        
-        local x1 = math.cos(angle) * radius
-        local y1 = math.sin(angle) * radius
-        local x2 = math.cos(nextAngle) * radius
-        local y2 = math.sin(nextAngle) * radius
-        
-        local line = self:CreateTexture(nil, "OVERLAY")
-        line:SetColorTexture(r, g, b, a)
-        
-        -- Calculate line length and rotation
-        local length = math.sqrt((x2-x1)^2 + (y2-y1)^2)
-        local midX = (x1 + x2) / 2
-        local midY = (y1 + y2) / 2
-        
-        line:SetSize(length, thickness)
-        line:SetPoint("CENTER", self, "CENTER", midX, midY)
-        
-        -- Rotate texture
-        local rotation = math.atan2(y2 - y1, x2 - x1)
-        line:SetRotation(rotation)
-        
-        table.insert(self.segments, line)
-    end
-    
-    self:SetSize(radius * 2 + 20, radius * 2 + 20)
+    a = a or 1  -- Ensure alpha is set
+
+    -- Update ring appearance
+    self.ring:SetVertexColor(r, g, b, a)
+    self.ring:SetSize(size, size)
+    self.ring:Show()  -- Make sure the texture is visible
+    self:SetSize(size + 20, size + 20)
 end
 
 -- Update position to follow mouse
@@ -104,8 +90,8 @@ end
 function MouseRing:UpdateAppearance()
     local db = addon.db.mouseRing
     if not db.enabled then return end
-    
-    self:BuildCircle()
+
+    self:UpdateRing()
     self:UpdateVisibility()
 end
 
