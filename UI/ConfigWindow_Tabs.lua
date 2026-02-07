@@ -613,8 +613,8 @@ function addon:CreateCrosshairTab(parent)
         self.Value:SetText(value)
         addon.db.crosshair.yOffset = value
         local module = addon:GetModule("Crosshair")
-        if module and module.UpdateAppearance then
-            module:UpdateAppearance()
+        if module and module.UpdatePosition then
+            module:UpdatePosition()
         end
     end)
     yOffset = yOffset - 100
