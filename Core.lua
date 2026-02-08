@@ -46,7 +46,7 @@ local function Initialize()
         addon:SlashCommand(msg)
     end
     
-    print("|cFF9D4EFFFHUSKIES|r QOL loaded! Type |cFF00FF00/huskies|r to configure.")
+    print("|cFF9D4EFFHUSKIES|r QOL loaded! Type |cFF00FF00/huskies|r to configure.")
 end
 
 -- Event handling
@@ -70,7 +70,7 @@ function addon:SlashCommand(msg)
     elseif msg == "reset" then
         StaticPopup_Show("HUSKIESQOL_RESET_CONFIRM")
     else
-        print("|cFF9D4EFFFHuskies|r QOL Commands:")
+        print("|cFF9D4EFFHUSKIES|r QOL Commands:")
         print("  /huskies - Open settings")
         print("  /huskies reset - Reset all settings")
     end

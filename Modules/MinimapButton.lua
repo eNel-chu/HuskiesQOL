@@ -145,7 +145,7 @@ button:SetScript("OnClick", function(self, btn)
             addon.ConfigWindow:Toggle()
         end
     elseif btn == "RightButton" then
-        print("|cFF9D4EFFFHuskies|r QOL: Right-click menu coming soon!")
+        print("|cFF9D4EFFHUSKIES|r QOL: Right-click menu coming soon!")
     end
 end)
 
@@ -156,7 +156,7 @@ end)
 button:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
     GameTooltip:ClearLines()
-    GameTooltip:SetText("|cFF9D4EFFFHuskies|r QOL", 1, 1, 1)
+    GameTooltip:SetText("|cFF9D4EFFHUSKIES|r QOL", 1, 1, 1)
     GameTooltip:AddLine("Left-click: Open Settings", 0.7, 0.7, 0.8)
     GameTooltip:AddLine("Drag: Reposition", 0.7, 0.7, 0.8)
     GameTooltip:Show()
@@ -188,7 +188,7 @@ local function Initialize()
         button:Show()
     end
     
-    print("|cFF9D4EFFFHuskies|r Minimap button loaded - drag to move anywhere!")
+    print("|cFF9D4EFFHUSKIES|r Minimap button loaded - drag to move anywhere!")
 end
 
 -- Event handler

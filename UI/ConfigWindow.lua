@@ -635,4 +635,4 @@ end)
 
 addon.ConfigWindow = ConfigWindow
 
-print("|cFF9D4EFFFHuskies|r ConfigWindow created (RESIZABLE & SCROLLABLE)!")
+print("|cFF9D4EFFHUSKIES|r ConfigWindow created (RESIZABLE & SCROLLABLE)!")

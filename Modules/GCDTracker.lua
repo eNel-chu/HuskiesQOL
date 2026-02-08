@@ -350,7 +350,7 @@ function GCDTracker:Unlock()
         addon.db.gcdTracker.unlocked = true
     end
     
-    print("|cFF9D4EFFFHUSKIES|r GCD Tracker unlocked! Drag to reposition.")
+    print("|cFF9D4EFFHUSKIES|r GCD Tracker unlocked! Drag to reposition.")
 end
 
 ---Toggle lock/unlock
@@ -511,4 +511,4 @@ end
 -- Register module
 addon:RegisterModule("GCDTracker", GCDTracker)
 
-print("|cFF9D4EFFFHUSKIES|r GCD Tracker (History) loaded!")
+print("|cFF9D4EFFHUSKIES|r GCD Tracker (History) loaded!")

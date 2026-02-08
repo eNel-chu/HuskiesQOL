@@ -1222,4 +1222,4 @@ function addon:CreateCombatNotifierTab(parent)
     return tab
 end
 
-print("|cFF9D4EFFFHUSKIES|r ConfigWindow Tabs loaded!")
+print("|cFF9D4EFFHUSKIES|r ConfigWindow Tabs loaded!")
