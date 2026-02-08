@@ -81,8 +81,8 @@ CreateBorder(ConfigWindow, 0.4, 0.7, 1)  -- Hellblau statt Lila
 ConfigWindow:SetMovable(true)
 ConfigWindow:EnableMouse(true)
 ConfigWindow:RegisterForDrag("LeftButton")
-ConfigWindow:SetScript("OnDragStart", ConfigWindow.StartMoving)
-ConfigWindow:SetScript("OnDragStop", ConfigWindow.StopMovingOrSizing)
+ConfigWindow:SetScript("OnMouseDown", ConfigWindow.StartMoving)
+ConfigWindow:SetScript("OnMouseUp", ConfigWindow.StopMovingOrSizing)
 ConfigWindow:SetClampedToScreen(true)
 ConfigWindow:Hide()
 
@@ -112,14 +112,14 @@ resizeHighlight:SetPoint("CENTER")
 resizeHighlight:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
 
 -- WICHTIG: Die Resize-Logik!
--- OnDragStart = Wenn User beginnt zu ziehen
-resizeButton:SetScript("OnDragStart", function(self)
+-- OnMouseDown = Wenn User beginnt zu ziehen
+resizeButton:SetScript("OnMouseDown", function(self)
     ConfigWindow:StartSizing("BOTTOMRIGHT")  -- Größe ändern von unten-rechts
     resizeTexture:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
 end)
 
--- OnDragStop = Wenn User loslässt
-resizeButton:SetScript("OnDragStop", function(self)
+-- OnMouseUp = Wenn User loslässt
+resizeButton:SetScript("OnMouseUp", function(self)
     ConfigWindow:StopMovingOrSizing()
     resizeTexture:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
     
@@ -170,8 +170,64 @@ version:SetText("version 2.0.0 - Resizable!")
 version:SetTextColor(0.5, 0.5, 0.6, 1)
 
 -- Close button
-local closeBtn = CreateFrame("Button", nil, ConfigWindow, "UIPanelCloseButton")
-closeBtn:SetPoint("TOPRIGHT", -5, -5)
+-- Custom styled close button
+local closeBtn = CreateFrame("Button", nil, ConfigWindow)
+closeBtn:SetSize(30, 30)
+closeBtn:SetPoint("TOPRIGHT", -10, -10)
+
+-- Background
+closeBtn.bg = closeBtn:CreateTexture(nil, "BACKGROUND")
+closeBtn.bg:SetAllPoints()
+closeBtn.bg:SetColorTexture(0.1, 0.1, 0.12, 0.8)
+
+-- Highlight
+closeBtn.highlight = closeBtn:CreateTexture(nil, "HIGHLIGHT")
+closeBtn.highlight:SetAllPoints()
+closeBtn.highlight:SetColorTexture(0.3, 0.5, 0.7, 0.3)
+
+-- Border
+local function CreateButtonBorder(parent)
+    local borderSize = 1
+    local color = {0.3, 0.3, 0.35, 1}
+    local top = parent:CreateTexture(nil, "BORDER")
+    top:SetColorTexture(unpack(color))
+    top:SetHeight(borderSize)
+    top:SetPoint("TOPLEFT")
+    top:SetPoint("TOPRIGHT")
+    local bottom = parent:CreateTexture(nil, "BORDER")
+    bottom:SetColorTexture(unpack(color))
+    bottom:SetHeight(borderSize)
+    bottom:SetPoint("BOTTOMLEFT")
+    bottom:SetPoint("BOTTOMRIGHT")
+    local left = parent:CreateTexture(nil, "BORDER")
+    left:SetColorTexture(unpack(color))
+    left:SetWidth(borderSize)
+    left:SetPoint("TOPLEFT")
+    left:SetPoint("BOTTOMLEFT")
+    local right = parent:CreateTexture(nil, "BORDER")
+    right:SetColorTexture(unpack(color))
+    right:SetWidth(borderSize)
+    right:SetPoint("TOPRIGHT")
+    right:SetPoint("BOTTOMRIGHT")
+end
+CreateButtonBorder(closeBtn)
+
+-- X text
+closeBtn.text = closeBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+closeBtn.text:SetPoint("CENTER", 0, 1)
+closeBtn.text:SetText("×")
+closeBtn.text:SetTextColor(0.9, 0.9, 0.9, 1)
+closeBtn.text:SetFont("Fonts\\FRIZQT__.TTF", 20, "OUTLINE")
+
+-- Hover effects
+closeBtn:SetScript("OnEnter", function(self)
+    self.bg:SetColorTexture(0.8, 0.2, 0.2, 0.9)
+    self.text:SetTextColor(1, 1, 1, 1)
+end)
+closeBtn:SetScript("OnLeave", function(self)
+    self.bg:SetColorTexture(0.1, 0.1, 0.12, 0.8)
+    self.text:SetTextColor(0.9, 0.9, 0.9, 1)
+end)
 closeBtn:SetScript("OnClick", function() ConfigWindow:Hide() end)
 
 -- ========================================
@@ -230,25 +286,53 @@ ConfigWindow.scrollFrame = scrollFrame
 -- Die Scrollbar (wird automatisch von UIPanelScrollFrameTemplate erstellt)
 local scrollBar = scrollFrame.ScrollBar
 
+-- Simple visual styling that doesn't break functionality
+C_Timer.After(0.1, function()
+    if not scrollBar then return end
+
+    -- Style the thumb (slider) - this is the main visual element
+    local thumb = scrollBar:GetThumbTexture()
+    if thumb then
+        thumb:SetTexture("Interface\\Buttons\\WHITE8X8")
+        thumb:SetVertexColor(0.4, 0.7, 1, 1)  -- Blue matching theme
+        thumb:SetWidth(14)
+    end
+
+    -- Style the background track
+    if scrollBar.Track then
+        scrollBar.Track:SetTexture("Interface\\Buttons\\WHITE8X8")
+        scrollBar.Track:SetVertexColor(0.1, 0.1, 0.12, 0.8)
+    end
+end)
+
 -- Mausrad-Handler
 scrollFrame:EnableMouseWheel(true)
 scrollFrame:SetScript("OnMouseWheel", function(self, delta)
-    -- delta ist positiv bei Scroll nach oben, negativ bei Scroll nach unten
-    local current = scrollBar:GetValue()
+    if not scrollBar then return end
+
+    -- Ensure scroll range is set
     local minVal, maxVal = scrollBar:GetMinMaxValues()
-    
-    -- Scroll-Geschwindigkeit: 20 Pixel pro Tick
-    local scrollSpeed = 20
-    local newValue = current - (delta * scrollSpeed)
-    
-    -- Begrenze den Wert
-    if newValue < minVal then
-        newValue = minVal
-    elseif newValue > maxVal then
-        newValue = maxVal
+    if maxVal == 0 then
+        -- Force update if range is not set
+        ConfigWindow:UpdateContentSize()
+        minVal, maxVal = scrollBar:GetMinMaxValues()
     end
-    
-    scrollBar:SetValue(newValue)
+
+    -- Only scroll if there's actually a range
+    if maxVal > 0 then
+        local current = scrollBar:GetValue()
+        local scrollSpeed = 20
+        local newValue = current - (delta * scrollSpeed)
+
+        -- Clamp value to range
+        if newValue < minVal then
+            newValue = minVal
+        elseif newValue > maxVal then
+            newValue = maxVal
+        end
+
+        scrollBar:SetValue(newValue)
+    end
 end)
 
 -- ========================================
@@ -259,16 +343,56 @@ end)
 function ConfigWindow:UpdateContentSize()
     -- Hole die aktuelle Größe des Content-Bereichs
     local width = contentFrame:GetWidth() - 40  -- -40 für Padding + Scrollbar
-    
+
     -- WICHTIG: Setze die Breite des scrollbaren Inhalts
     scrollChild:SetWidth(width > 0 and width or 600)
-    
-    -- Die Höhe bleibt groß genug für alle Tabs
-    -- (wird nicht verkleinert, sonst würde man nicht scrollen können!)
-    scrollChild:SetHeight(2000)
-    
-    -- Debug-Ausgabe (kannst du später entfernen)
-    -- print("Content updated: width=" .. (width or "nil"))
+
+    -- Calculate actual content height dynamically
+    local actualHeight = 100  -- Start with some padding
+
+    -- Find the current active tab content
+    for _, child in ipairs({scrollChild:GetChildren()}) do
+        if child:IsShown() then
+            -- Get all children of the tab
+            local maxBottom = 0
+            for _, element in ipairs({child:GetChildren()}) do
+                if element:IsShown() then
+                    local bottom = element:GetBottom()
+                    local top = child:GetTop()
+                    if bottom and top then
+                        local elementHeight = top - bottom
+                        if elementHeight > maxBottom then
+                            maxBottom = elementHeight
+                        end
+                    end
+                end
+            end
+            if maxBottom > actualHeight then
+                actualHeight = maxBottom + 50  -- Add bottom padding
+            end
+        end
+    end
+
+    -- Get the visible scroll area height
+    local scrollFrameHeight = scrollFrame:GetHeight() or 500
+
+    -- Set height to be at least the visible area, or the content height if larger
+    local finalHeight = math.max(scrollFrameHeight, actualHeight)
+    scrollChild:SetHeight(finalHeight)
+
+    -- Update scrollbar range
+    C_Timer.After(0.05, function()
+        if scrollBar then
+            local range = math.max(0, finalHeight - scrollFrameHeight)
+            scrollBar:SetMinMaxValues(0, range)
+
+            -- If we're scrolled past the new max, scroll back
+            local currentValue = scrollBar:GetValue()
+            if currentValue > range then
+                scrollBar:SetValue(range)
+            end
+        end
+    end)
 end
 
 -- Initial die Größe setzen
@@ -360,9 +484,14 @@ function ConfigWindow:ShowTab(index)
         end
     end
     currentTab = index
-    
+
     -- WICHTIG: Scroll zurück nach oben beim Tab-Wechsel
     scrollFrame.ScrollBar:SetValue(0)
+
+    -- Update content size after tab change
+    C_Timer.After(0.05, function()
+        self:UpdateContentSize()
+    end)
 end
 
 -- Tabs initialisieren
