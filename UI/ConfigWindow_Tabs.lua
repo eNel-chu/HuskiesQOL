@@ -1222,4 +1222,215 @@ function addon:CreateCombatNotifierTab(parent)
     return tab
 end
 
+-- ========================================
+-- TAB 6: PASS ON DECOR
+-- ========================================
+
+function addon:CreatePassOnDecorTab(parent)
+    local tab = CreateFrame("Frame", nil, parent)
+    tab:SetSize(parent:GetWidth(), 400)
+    tab:SetPoint("TOPLEFT", 20, -20)
+
+    local yOffset = 0
+
+    local title = CreateTitle(tab, "Pass on Decor")
+    title:SetPoint("TOPLEFT", 0, yOffset)
+    yOffset = yOffset - 40
+
+    local desc = CreateDescription(tab, "Automatically passes on housing Decor items that drop at the end of Mythic+ dungeons.")
+    desc:SetPoint("TOPLEFT", 0, yOffset)
+    desc:SetWidth(500)
+    yOffset = yOffset - 60
+
+    -- Enable checkbox
+    local enableCheck = CreateCheckbox(tab, "Enable Pass on Decor", "Automatically pass on Decor loot rolls")
+    enableCheck:SetPoint("TOPLEFT", 0, yOffset)
+    enableCheck:SetChecked(addon.db.passOnDecor.enabled)
+    enableCheck:SetScript("OnClick", function(self)
+        addon.db.passOnDecor.enabled = self:GetChecked()
+        local module = addon:GetModule("PassOnDecor")
+        if module then
+            if addon.db.passOnDecor.enabled then
+                module:Enable()
+            else
+                module:Disable()
+            end
+        end
+    end)
+    yOffset = yOffset - 60
+
+    -- Separator
+    local sep = tab:CreateTexture(nil, "ARTWORK")
+    sep:SetHeight(2)
+    sep:SetPoint("TOPLEFT", 0, yOffset)
+    sep:SetPoint("TOPRIGHT", -20, yOffset)
+    sep:SetColorTexture(0.3, 0.3, 0.35, 0.8)
+    yOffset = yOffset - 20
+
+    -- Info box
+    local infoBox = CreateFrame("Frame", nil, tab)
+    infoBox:SetSize(500, 110)
+    infoBox:SetPoint("TOPLEFT", 0, yOffset)
+
+    local infoBg = infoBox:CreateTexture(nil, "BACKGROUND")
+    infoBg:SetAllPoints()
+    infoBg:SetColorTexture(0.1, 0.15, 0.2, 0.5)
+
+    local infoText = infoBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    infoText:SetPoint("TOPLEFT", 10, -10)
+    infoText:SetPoint("BOTTOMRIGHT", -10, 10)
+    infoText:SetJustifyH("LEFT")
+    infoText:SetJustifyV("TOP")
+    infoText:SetText([[
+|cFF00FF00How it works:|r
+• Listens for loot roll events at end of Mythic+ dungeon
+• Detects Decor items by their item class ID (housing decorations)
+• Automatically clicks Pass so you don't have to
+• A chat message confirms each item that was passed on
+    ]])
+
+    tab:Hide()
+    return tab
+end
+
+-- ========================================
+-- TAB 7: PREY PROGRESSBAR
+-- ========================================
+
+function addon:CreatePreyProgressbarTab(parent)
+    local tab = CreateFrame("Frame", nil, parent)
+    tab:SetSize(parent:GetWidth(), 800)
+    tab:SetPoint("TOPLEFT", 20, -20)
+
+    local yOffset = 0
+
+    local title = CreateTitle(tab, "Prey Progressbar")
+    title:SetPoint("TOPLEFT", 0, yOffset)
+    yOffset = yOffset - 40
+
+    local desc = CreateDescription(tab, "Tracks and displays your Prey hunt progress. Fill the bar by disarming traps, activating bloodstones, and surviving your prey hunting you.")
+    desc:SetPoint("TOPLEFT", 0, yOffset)
+    desc:SetWidth(550)
+    yOffset = yOffset - 70
+
+    -- Enable checkbox
+    local enableCheck = CreateCheckbox(tab, "Enable Prey Progressbar", "Show the Prey hunt progress bar on screen")
+    enableCheck:SetPoint("TOPLEFT", 0, yOffset)
+    enableCheck:SetChecked(addon.db.preyProgressbar.enabled)
+    enableCheck:SetScript("OnClick", function(self)
+        addon.db.preyProgressbar.enabled = self:GetChecked()
+        local module = addon:GetModule("PreyProgressbar")
+        if module then
+            if addon.db.preyProgressbar.enabled then
+                module:Enable()
+            else
+                module:Disable()
+            end
+        end
+    end)
+    yOffset = yOffset - 50
+
+    -- Unlock/Lock button
+    local unlockBtn = CreateModernButton(tab, addon.db.preyProgressbar.unlocked and "Lock Position" or "Unlock Position", 150)
+    unlockBtn:SetPoint("TOPLEFT", 0, yOffset)
+    unlockBtn:SetScript("OnClick", function(self)
+        local module = addon:GetModule("PreyProgressbar")
+        if module then
+            module:ToggleLock()
+            self.text:SetText(addon.db.preyProgressbar.unlocked and "Lock Position" or "Unlock Position")
+        end
+    end)
+    yOffset = yOffset - 60
+
+    -- Separator
+    local sep2 = tab:CreateTexture(nil, "ARTWORK")
+    sep2:SetHeight(2)
+    sep2:SetPoint("TOPLEFT", 0, yOffset)
+    sep2:SetPoint("TOPRIGHT", -20, yOffset)
+    sep2:SetColorTexture(0.3, 0.3, 0.35, 0.8)
+    yOffset = yOffset - 20
+
+    -- APPEARANCE SECTION
+    local appearHeader = tab:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    appearHeader:SetPoint("TOPLEFT", 0, yOffset)
+    appearHeader:SetText("Appearance")
+    appearHeader:SetTextColor(0.4, 0.7, 1, 1)
+    yOffset = yOffset - 40
+
+    -- Width slider
+    local widthSlider = CreateSlider(tab, "Bar Width", 100, 600, 10, "Width of the progress bar")
+    widthSlider:SetPoint("TOPLEFT", 0, yOffset)
+    widthSlider:SetValue(addon.db.preyProgressbar.width or 300)
+    widthSlider.Value:SetText(addon.db.preyProgressbar.width or 300)
+    widthSlider:SetScript("OnValueChanged", function(self, value)
+        value = math.floor(value)
+        self.Value:SetText(value)
+        addon.db.preyProgressbar.width = value
+        local module = addon:GetModule("PreyProgressbar")
+        if module and module.UpdateAppearance then module:UpdateAppearance() end
+    end)
+    yOffset = yOffset - 80
+
+    -- Height slider
+    local heightSlider = CreateSlider(tab, "Bar Height", 10, 60, 2, "Height of the progress bar")
+    heightSlider:SetPoint("TOPLEFT", 0, yOffset)
+    heightSlider:SetValue(addon.db.preyProgressbar.height or 30)
+    heightSlider.Value:SetText(addon.db.preyProgressbar.height or 30)
+    heightSlider:SetScript("OnValueChanged", function(self, value)
+        value = math.floor(value)
+        self.Value:SetText(value)
+        addon.db.preyProgressbar.height = value
+        local module = addon:GetModule("PreyProgressbar")
+        if module and module.UpdateAppearance then module:UpdateAppearance() end
+    end)
+    yOffset = yOffset - 80
+
+    -- Show label checkbox
+    local labelCheck = CreateCheckbox(tab, "Show Label", "Show 'Prey Progress' text above the bar")
+    labelCheck:SetPoint("TOPLEFT", 0, yOffset)
+    labelCheck:SetChecked(addon.db.preyProgressbar.showLabel ~= false)
+    labelCheck:SetScript("OnClick", function(self)
+        addon.db.preyProgressbar.showLabel = self:GetChecked()
+        local module = addon:GetModule("PreyProgressbar")
+        if module and module.UpdateAppearance then module:UpdateAppearance() end
+    end)
+    yOffset = yOffset - 40
+
+    -- Show text checkbox
+    local textCheck = CreateCheckbox(tab, "Show Progress Text", "Show current/max numbers inside the bar")
+    textCheck:SetPoint("TOPLEFT", 0, yOffset)
+    textCheck:SetChecked(addon.db.preyProgressbar.showText ~= false)
+    textCheck:SetScript("OnClick", function(self)
+        addon.db.preyProgressbar.showText = self:GetChecked()
+        local module = addon:GetModule("PreyProgressbar")
+        if module and module.UpdateAppearance then module:UpdateAppearance() end
+    end)
+    yOffset = yOffset - 60
+
+    -- Info box
+    local infoBox = CreateFrame("Frame", nil, tab)
+    infoBox:SetSize(550, 120)
+    infoBox:SetPoint("TOPLEFT", 0, yOffset)
+
+    local infoBg = infoBox:CreateTexture(nil, "BACKGROUND")
+    infoBg:SetAllPoints()
+    infoBg:SetColorTexture(0.1, 0.15, 0.2, 0.5)
+
+    local infoText = infoBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    infoText:SetPoint("TOPLEFT", 10, -10)
+    infoText:SetPoint("BOTTOMRIGHT", -10, 10)
+    infoText:SetJustifyH("LEFT")
+    infoText:SetJustifyV("TOP")
+    infoText:SetText([[
+|cFF00FF00How it works:|r
+• Automatically detects your active Prey hunt quest
+• Uses the game's widget system to read the real progress value
+• Bar appears when you accept a Prey hunt, hides when the quest ends
+• Use "Unlock Position" to drag the bar anywhere on screen
+    ]])
+
+    tab:Hide()
+    return tab
+end
+
 print("|cFF9D4EFFHUSKIES|r ConfigWindow Tabs loaded!")

@@ -414,6 +414,8 @@ local tabNames = {
     {name = "Cursor Ring"},
     {name = "GCD Tracker"},
     {name = "Combat"},
+    {name = "Pass on Decor"},
+    {name = "Prey Bar"},
 }
 
 -- Tab Button erstellen (unverändert)
@@ -519,7 +521,13 @@ function ConfigWindow:InitializeTabs()
         
         success, tabs[5] = pcall(addon.CreateCombatNotifierTab, addon, scrollChild)
         if not success then print("|cFFFF0000Error creating CombatNotifier tab:|r " .. tostring(tabs[5])) end
-        
+
+        success, tabs[6] = pcall(addon.CreatePassOnDecorTab, addon, scrollChild)
+        if not success then print("|cFFFF0000Error creating PassOnDecor tab:|r " .. tostring(tabs[6])) end
+
+        success, tabs[7] = pcall(addon.CreatePreyProgressbarTab, addon, scrollChild)
+        if not success then print("|cFFFF0000Error creating PreyProgressbar tab:|r " .. tostring(tabs[7])) end
+
         print("|cFF00FF00HuskiesQOL:|r Created " .. #tabs .. " tabs")
     else
         print("|cFFFF0000HuskiesQOL:|r Tab functions not found!")

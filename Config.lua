@@ -76,4 +76,23 @@ addon.Defaults = {
         hide = false,
         angle = 225, -- Position around minimap (degrees)
     },
+
+    -- Pass On Decor
+    passOnDecor = {
+        enabled = true,
+    },
+
+    -- Prey Progressbar
+    preyProgressbar = {
+        enabled = true,
+        width = 300,
+        height = 30,
+        showLabel = true,
+        showText = true,
+        unlocked = false,
+        point = "CENTER",
+        relativePoint = "CENTER",
+        xOffset = 0,
+        yOffset = 200,
+    },
 }
