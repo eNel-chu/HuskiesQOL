@@ -1396,17 +1396,6 @@ function addon:CreatePreyProgressbarTab(parent)
     end)
     yOffset = yOffset - 40
 
-    -- Show text checkbox
-    local textCheck = CreateCheckbox(tab, "Show Progress Text", "Show current/max numbers inside the bar")
-    textCheck:SetPoint("TOPLEFT", 0, yOffset)
-    textCheck:SetChecked(addon.db.preyProgressbar.showText ~= false)
-    textCheck:SetScript("OnClick", function(self)
-        addon.db.preyProgressbar.showText = self:GetChecked()
-        local module = addon:GetModule("PreyProgressbar")
-        if module and module.UpdateAppearance then module:UpdateAppearance() end
-    end)
-    yOffset = yOffset - 60
-
     -- Info box
     local infoBox = CreateFrame("Frame", nil, tab)
     infoBox:SetSize(550, 120)

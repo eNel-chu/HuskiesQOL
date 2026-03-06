@@ -88,7 +88,6 @@ addon.Defaults = {
         width = 300,
         height = 30,
         showLabel = true,
-        showText = true,
         unlocked = false,
         point = "CENTER",
         relativePoint = "CENTER",
